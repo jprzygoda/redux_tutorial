@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {updateUser} from './actions/user-actions';
+import {updateUser, apiRequest} from './actions/user-actions';
 
 class App extends Component {
 
@@ -11,8 +12,14 @@ class App extends Component {
         this.onUpdateUser=this.onUpdateUser.bind(this);
     }
 
-    onUpdateUser(){
-        this.props.onUpdateUser('Sammy');
+    componentDidMount(){
+        setTimeout(() => {
+            this.pops.onApiRequest();
+        },1500);
+    }
+
+    onUpdateUser(event){
+        this.props.onUpdateUser(event.target.value);
     }
 
   render() {
@@ -25,20 +32,26 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <div onClick={this.onUpdateUser}>Update user</div>
+        <input onChange={this.onUpdateUser}/>
         {this.props.user}
       </div>
     );
   }
 }
 
-const mapStateToProps=state =>({
-    products: state.products,
-    user: state.user
-});
+const mapStateToProps=(state, props) =>{
+    return{
+        products: state.products,
+        user: state.user,
+        userPlusProp: '${state.user} ${props.aRandomProps}'
+    }
+};
 
 const mapActionsToProps={
-    onUpdateUser: updateUser
-}
+        onUpdateUser: updateUser,
+        onApiRequest: apiRequest
+};
+
+
 
 export default connect(mapStateToProps, mapActionsToProps) (App);
